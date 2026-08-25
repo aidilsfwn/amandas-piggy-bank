@@ -44,12 +44,10 @@ Keep financial calculations in pure TypeScript functions so they can be unit tes
 - Use environment variables for Supabase URL and anon key.
 - Validate again at the database boundary with constraints and/or a typed insert path.
 
-## Offline/PWA behavior
+## Connectivity
 
-- Cache the app shell and static assets.
-- Previously loaded data may remain readable offline.
-- MVP writes may require connectivity; show `Offline` and disable or queue writes explicitly rather than pretending they succeeded.
-- If queued writes are implemented, use an idempotent client-generated UUID and visible retry state.
+- Supabase is the source of truth and connectivity is required for reads and writes.
+- Failed writes remain visible as an error and are not presented as successfully saved.
 
 ## Testing and quality gates
 
@@ -61,4 +59,4 @@ Keep financial calculations in pure TypeScript functions so they can be unit tes
 
 ## Deployment
 
-Use a static host connected to the repository, configure the SPA fallback, add Supabase environment variables, and map the owner's domain/subdomain. Keep the free-tier database small and provide a CSV export before any destructive migration.
+Use a static host connected to the repository, configure the SPA fallback, add Supabase environment variables, and map the owner's domain/subdomain. Keep the free-tier database small and use the CSV export before any destructive migration.

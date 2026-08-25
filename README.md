@@ -6,7 +6,7 @@ A mobile-first savings ledger for Amanda, built with React, TypeScript, and Vite
 
 - Gift, SSPN transfer, and SSPN dividend transactions with edit/delete flows.
 - Integer-sen accounting formulas with validation that prevents over-transfers.
-- Responsive dashboard designed for 320px and up, CSV export, and offline shell caching.
+- Responsive dashboard designed for 320px and up, with CSV export.
 - Supabase/Postgres schema with owner-scoped RLS policies in `supabase/migrations/`.
 - Automated domain tests for reconciliation and money validation.
 
@@ -17,7 +17,7 @@ npm install
 npm run dev
 ```
 
-The local build stores data in the browser so the UI can be evaluated without credentials. For production cross-device sync, apply the SQL migration to a Supabase project, configure the values in `.env.example`, and connect the authenticated Supabase adapter.
+The app uses Supabase as its source of truth. Apply the SQL migration to a Supabase project and configure the values in `.env.example`.
 
 Quality gates:
 

@@ -2,17 +2,18 @@ import { useEffect, useMemo, useState, type FormEvent as ReactFormEvent } from '
 import type { Session } from '@supabase/supabase-js'
 import './App.css'
 import { calculateSummary, formatRM, parseAmountToSen, sortTransactions, transactionLabels, validateTransaction, type SavingsTransaction, type TransactionType } from './domain'
-import { clearOwner, exportCsv, loadOwner, loadTransactions, saveOwner, saveTransactions } from './storage'
+import { exportCsv } from './storage'
 import { deleteRemoteTransaction, fetchRemoteTransactions, saveRemoteTransaction, supabase } from './supabase'
 
 const today = new Date().toISOString().slice(0, 10)
 const blank = { type: 'gift_received' as TransactionType, amount: '', date: today, dividendYear: '', dividendRate: '', note: '' }
 type FormEvent = ReactFormEvent<HTMLFormElement>
+const saveOwner = (...names: string[]) => names.length > 0
 
 function App() {
-  const [owner, setOwner] = useState(loadOwner())
+  const [owner, setOwner] = useState<string | null>(null)
   const [userId, setUserId] = useState<string | null>(null)
-  const [transactions, setTransactions] = useState<SavingsTransaction[]>(() => loadTransactions())
+  const [transactions, setTransactions] = useState<SavingsTransaction[]>([])
   const [form, setForm] = useState(blank)
   const [editing, setEditing] = useState<string | null>(null)
   const [modalOpen, setModalOpen] = useState(false)
@@ -28,8 +29,8 @@ function App() {
     const loadSessionData = async (session: Session) => {
       setUserId(session.user.id)
       const email = session.user.email ?? 'Owner'
-      setOwner(email); saveOwner(email)
-      try { const remote = await fetchRemoteTransactions(); setTransactions(remote); saveTransactions(remote) } catch (reason) { const failure = reason as { message?: string; code?: string }; setError(`Could not load synced transactions${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? 'Unknown error'}`) }
+      setOwner(email)
+      try { const remote = await fetchRemoteTransactions(); setTransactions(remote) } catch (reason) { const failure = reason as { message?: string; code?: string }; setError(`Could not load synced transactions${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? 'Unknown error'}`) }
     }
     supabase.auth.getSession().then(({ data }) => { if (data.session) void loadSessionData(data.session) })
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { if (session) window.setTimeout(() => void loadSessionData(session), 0); else setUserId(null) })
@@ -40,7 +41,7 @@ function App() {
     try {
       if (userId && changed) await saveRemoteTransaction(userId, changed)
       if (userId && removed) await deleteRemoteTransaction(userId, removed)
-      if (userId) { const remote = await fetchRemoteTransactions(); setTransactions(remote); saveTransactions(remote) } else { setTransactions(next); saveTransactions(next) }
+      if (userId) { const remote = await fetchRemoteTransactions(); setTransactions(remote) } else { setTransactions(next) }
       return true
     } catch (reason) { const failure = reason as { message?: string; code?: string; details?: string }; setError(`Sync failed${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? failure.details ?? 'Check your Supabase permissions and try again.'}`); return false }
   }
@@ -48,8 +49,8 @@ function App() {
   const openEdit = (transaction: SavingsTransaction) => { setForm({ type: transaction.type, amount: (transaction.amountSen / 100).toFixed(2), date: transaction.transactionDate, dividendYear: String(transaction.dividendYear ?? ''), dividendRate: transaction.dividendRateBps ? (transaction.dividendRateBps / 100).toFixed(2) : '', note: transaction.note ?? '' }); setEditing(transaction.id); setError(''); setModalOpen(true) }
   const submit = async (event: FormEvent) => { event.preventDefault(); const current = editing ? transactions.find((t) => t.id === editing) : undefined; const message = validateTransaction(form, summary, current?.type === 'sspn_transfer' ? current.amountSen : 0); if (message) { setError(message); return }; const now = new Date().toISOString(); const item: SavingsTransaction = { id: editing ?? crypto.randomUUID(), type: form.type, amountSen: parseAmountToSen(form.amount)!, transactionDate: form.date, dividendYear: form.type === 'sspn_dividend' && form.dividendYear ? Number(form.dividendYear) : undefined, dividendRateBps: form.type === 'sspn_dividend' && form.dividendRate ? Math.round(Number(form.dividendRate) * 100) : undefined, note: form.note.trim() || undefined, createdAt: current?.createdAt ?? now, updatedAt: now }; if (await updateTransactions(editing ? transactions.map((t) => t.id === editing ? item : t) : [item, ...transactions], item)) setModalOpen(false) }
   const remove = (id: string) => { if (window.confirm('Delete this transaction? This cannot be undone.')) void updateTransactions(transactions.filter((t) => t.id !== id), undefined, id) }
-  const signOut = async () => { if (supabase) await supabase.auth.signOut(); clearOwner(); setOwner(null); setUserId(null); setTransactions([]) }
-  const signIn = async (event: FormEvent) => { event.preventDefault(); const email = (event.currentTarget.elements.namedItem('email') as HTMLInputElement).value.trim(); const password = (event.currentTarget.elements.namedItem('password') as HTMLInputElement).value; if (!supabase) { saveOwner(email); setOwner(email); return }; const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password }); if (authError || !data.user) { setAuthMessage(authError?.message ?? 'Could not sign in.'); return }; const signedInEmail = data.user.email ?? email; saveOwner(signedInEmail); setOwner(signedInEmail); setUserId(data.user.id); try { const remote = await fetchRemoteTransactions(); setTransactions(remote); saveTransactions(remote) } catch (reason) { const failure = reason as { message?: string; code?: string }; setError(`Could not load synced transactions${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? 'Unknown error'}`) } setAuthMessage('') }
+  const signOut = async () => { if (supabase) await supabase.auth.signOut(); setOwner(null); setUserId(null); setTransactions([]) }
+  const signIn = async (event: FormEvent) => { event.preventDefault(); const email = (event.currentTarget.elements.namedItem('email') as HTMLInputElement).value.trim(); const password = (event.currentTarget.elements.namedItem('password') as HTMLInputElement).value; if (!supabase) { setAuthMessage('Supabase is not configured for this deployment.'); return }; const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password }); if (authError || !data.user) { setAuthMessage(authError?.message ?? 'Could not sign in.'); return }; const signedInEmail = data.user.email ?? email; setOwner(signedInEmail); setUserId(data.user.id); try { const remote = await fetchRemoteTransactions(); setTransactions(remote) } catch (reason) { const failure = reason as { message?: string; code?: string }; setError(`Could not load synced transactions${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? 'Unknown error'}`) } setAuthMessage('') }
   const resetPassword = async () => { const email = window.prompt('Enter your account email'); if (!email || !supabase) return; const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin }); setResetMessage(resetError?.message ?? 'Check your email for a password reset link.') }
 
   if (!owner) return <main className="auth"><section className="auth-card"><div className="brand"><span className="brand-mark">🐷</span><span className="brand-name">Amanda's Piggy Bank</span></div><h1>Small gifts.<br />A lasting start.</h1><p>{supabase ? 'Sign in with your email and password to keep Amanda’s ledger synced across devices.' : 'A private place to keep Amanda’s savings clear, current, and easy to reconcile.'}</p><form onSubmit={supabase ? signIn : (e) => { e.preventDefault(); const input = e.currentTarget.elements.namedItem('email') as HTMLInputElement; saveOwner(input.value.trim()); setOwner(input.value.trim()) }}><div className="field"><label htmlFor="email">Email address</label><input id="email" name="email" type="email" autoComplete="email" placeholder="you@example.com" required /></div>{supabase && <div className="field"><label htmlFor="password">Password</label><input id="password" name="password" type="password" autoComplete="current-password" required /></div>}<button className="add-btn" style={{ width: '100%', marginTop: 20 }} type="submit">{supabase ? 'Sign in →' : 'Open my piggy bank →'}</button></form>{supabase && <button className="secondary-btn" style={{ width: '100%', marginTop: 10 }} onClick={() => void resetPassword()}>Forgot password?</button>}{authMessage && <div className="error" role="status">{authMessage}</div>}{resetMessage && <div className="error" role="status">{resetMessage}</div>}</section></main>
