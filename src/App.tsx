@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent as ReactFormEvent } from 'react'
+import type { Session } from '@supabase/supabase-js'
 import './App.css'
 import { calculateSummary, formatRM, parseAmountToSen, sortTransactions, transactionLabels, validateTransaction, type SavingsTransaction, type TransactionType } from './domain'
 import { clearOwner, exportCsv, loadOwner, loadTransactions, saveOwner, saveTransactions } from './storage'
@@ -24,14 +25,14 @@ function App() {
 
   useEffect(() => {
     if (!supabase) return
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (!data.session) return
-      setUserId(data.session.user.id)
-      const email = data.session.user.email ?? 'Owner'
+    const loadSessionData = async (session: Session) => {
+      setUserId(session.user.id)
+      const email = session.user.email ?? 'Owner'
       setOwner(email); saveOwner(email)
-      try { const remote = await fetchRemoteTransactions(); setTransactions(remote); saveTransactions(remote) } catch (reason) { setError(reason instanceof Error ? reason.message : 'Could not load synced data.') }
-    })
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { setUserId(session?.user.id ?? null) })
+      try { const remote = await fetchRemoteTransactions(); setTransactions(remote); saveTransactions(remote) } catch (reason) { const failure = reason as { message?: string; code?: string }; setError(`Could not load synced transactions${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? 'Unknown error'}`) }
+    }
+    supabase.auth.getSession().then(({ data }) => { if (data.session) void loadSessionData(data.session) })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => { if (session) window.setTimeout(() => void loadSessionData(session), 0); else setUserId(null) })
     return () => listener.subscription.unsubscribe()
   }, [])
 
