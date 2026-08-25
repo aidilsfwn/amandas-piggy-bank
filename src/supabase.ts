@@ -5,12 +5,12 @@ const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
 const key = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string | undefined
 export const supabase = url && key ? createClient(url, key) : null
 
-type Row = { id: string; user_id: string; child_id: string; type: TransactionType; amount_sen: number; transaction_date: string; dividend_year: number | null; dividend_rate_bps: number | null; note: string | null; created_at: string; updated_at: string }
+type Row = { id: string; user_id: string; type: TransactionType; amount_sen: number; transaction_date: string; dividend_year: number | null; dividend_rate_bps: number | null; note: string | null; created_at: string; updated_at: string }
 export const toTransaction = (row: Row): SavingsTransaction => ({ id: row.id, type: row.type, amountSen: row.amount_sen, transactionDate: row.transaction_date, dividendYear: row.dividend_year ?? undefined, dividendRateBps: row.dividend_rate_bps ?? undefined, note: row.note ?? undefined, createdAt: row.created_at, updatedAt: row.updated_at })
 
 export async function fetchRemoteTransactions(userId: string) {
   if (!supabase) return []
-  const { data, error } = await supabase.from('savings_transactions').select('*').eq('user_id', userId).order('transaction_date', { ascending: false }).order('created_at', { ascending: false })
+  const { data, error } = await supabase.from('savings_transactions').select('id,user_id,type,amount_sen,transaction_date,dividend_year,dividend_rate_bps,note,created_at,updated_at').eq('user_id', userId).order('transaction_date', { ascending: false }).order('created_at', { ascending: false })
   if (error) throw error
   return (data as Row[]).map(toTransaction)
 }
