@@ -17,8 +17,9 @@ export async function fetchRemoteTransactions(userId: string) {
 
 export async function saveRemoteTransaction(userId: string, transaction: SavingsTransaction) {
   if (!supabase) return
-  const { error } = await supabase.from('savings_transactions').upsert({ id: transaction.id, user_id: userId, type: transaction.type, amount_sen: transaction.amountSen, transaction_date: transaction.transactionDate, dividend_year: transaction.dividendYear ?? null, dividend_rate_bps: transaction.dividendRateBps ?? null, note: transaction.note ?? null, updated_at: transaction.updatedAt })
+  const { data, error } = await supabase.from('savings_transactions').upsert({ id: transaction.id, user_id: userId, type: transaction.type, amount_sen: transaction.amountSen, transaction_date: transaction.transactionDate, dividend_year: transaction.dividendYear ?? null, dividend_rate_bps: transaction.dividendRateBps ?? null, note: transaction.note ?? null, updated_at: transaction.updatedAt }).select('id,user_id,type,amount_sen,transaction_date,dividend_year,dividend_rate_bps,note,created_at,updated_at').single()
   if (error) throw error
+  if (!data) throw new Error('Supabase accepted the write but returned no saved transaction.')
 }
 
 export async function deleteRemoteTransaction(userId: string, id: string) { if (!supabase) return; const { error } = await supabase.from('savings_transactions').delete().eq('id', id).eq('user_id', userId); if (error) throw error }
