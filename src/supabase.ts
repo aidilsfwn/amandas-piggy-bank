@@ -10,8 +10,9 @@ export const toTransaction = (row: Row): SavingsTransaction => ({ id: row.id, ty
 
 export async function fetchRemoteTransactions() {
   if (!supabase) return []
-  const { data, error } = await supabase.from('savings_transactions').select('id,user_id,type,amount_sen,transaction_date,dividend_year,dividend_rate_bps,note,created_at,updated_at').order('transaction_date', { ascending: false }).order('created_at', { ascending: false })
+  const { data, error, count } = await supabase.from('savings_transactions').select('id,user_id,type,amount_sen,transaction_date,dividend_year,dividend_rate_bps,note,created_at,updated_at', { count: 'exact' }).order('transaction_date', { ascending: false }).order('created_at', { ascending: false }).range(0, 999)
   if (error) throw error
+  if (count !== null && data.length !== count) throw new Error(`Transaction sync returned ${data.length} of ${count} visible rows.`)
   return (data as Row[]).map(toTransaction)
 }
 
