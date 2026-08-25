@@ -13,6 +13,11 @@ export async function ensureChild(userId: string) {
   const { data: existing } = await supabase.from('children').select('id').eq('user_id', userId).eq('name', 'Amanda').maybeSingle()
   if (existing) return existing.id as string
   const { data, error } = await supabase.from('children').insert({ user_id: userId, name: 'Amanda' }).select('id').single()
+  if (error?.code === '23505') {
+    const { data: createdByAnotherRequest, error: lookupError } = await supabase.from('children').select('id').eq('user_id', userId).eq('name', 'Amanda').single()
+    if (lookupError) throw lookupError
+    return createdByAnotherRequest.id as string
+  }
   if (error) throw error
   return data.id as string
 }
