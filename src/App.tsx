@@ -37,7 +37,12 @@ function App() {
   }, [])
 
   const updateTransactions = async (next: SavingsTransaction[], changed?: SavingsTransaction, removed?: string) => {
-    try { if (userId && changed) await saveRemoteTransaction(userId, changed); if (userId && removed) await deleteRemoteTransaction(userId, removed); setTransactions(next); saveTransactions(next); return true } catch (reason) { const failure = reason as { message?: string; code?: string; details?: string }; setError(`Sync failed${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? failure.details ?? 'Check your Supabase permissions and try again.'}`); return false }
+    try {
+      if (userId && changed) await saveRemoteTransaction(userId, changed)
+      if (userId && removed) await deleteRemoteTransaction(userId, removed)
+      if (userId) { const remote = await fetchRemoteTransactions(); setTransactions(remote); saveTransactions(remote) } else { setTransactions(next); saveTransactions(next) }
+      return true
+    } catch (reason) { const failure = reason as { message?: string; code?: string; details?: string }; setError(`Sync failed${failure.code ? ` (${failure.code})` : ''}: ${failure.message ?? failure.details ?? 'Check your Supabase permissions and try again.'}`); return false }
   }
   const openNew = () => { setForm(blank); setEditing(null); setError(''); setModalOpen(true) }
   const openEdit = (transaction: SavingsTransaction) => { setForm({ type: transaction.type, amount: (transaction.amountSen / 100).toFixed(2), date: transaction.transactionDate, dividendYear: String(transaction.dividendYear ?? ''), dividendRate: transaction.dividendRateBps ? (transaction.dividendRateBps / 100).toFixed(2) : '', note: transaction.note ?? '' }); setEditing(transaction.id); setError(''); setModalOpen(true) }
