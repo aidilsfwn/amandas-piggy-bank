@@ -24,6 +24,7 @@ import * as Select from "@radix-ui/react-select";
 import { DayPicker } from "react-day-picker";
 import "react-day-picker/style.css";
 import "./App.css";
+import { Button } from "./components/ui/button";
 import {
   calculateSummary,
   formatRM,
@@ -289,21 +290,21 @@ function App() {
                 required
               />
             </div>
-            <button
+            <Button
               className="add-btn"
               style={{ width: "100%", marginTop: 20 }}
               type="submit"
             >
               Sign in →
-            </button>
+            </Button>
           </form>
-          <button
+          <Button
             className="secondary-btn"
             style={{ width: "100%", marginTop: 10 }}
             onClick={() => void resetPassword()}
           >
             Forgot password?
-          </button>
+          </Button>
           {authMessage && (
             <div className="error" role="status">
               {authMessage}
@@ -329,19 +330,19 @@ function App() {
             <span className="brand-name">Amanda's Piggy Bank</span>
           </div>
           <div className="top-actions">
-            <button
+            <Button
               className="secondary-btn export-btn"
               onClick={() => exportCsv(history)}
             >
               Export CSV
-            </button>
-            <button
+            </Button>
+            <Button
               className="secondary-btn logout-btn"
               aria-label="Log out"
               onClick={() => setLogoutOpen(true)}
             >
               <LogOut size={16} aria-hidden="true" /> Log out
-            </button>
+            </Button>
           </div>
         </header>
         <section className="hero">
@@ -359,9 +360,9 @@ function App() {
               in SSPN, and everything Amanda owns.
             </p>
           </div>
-          <button className="add-btn" onClick={openNew}>
+          <Button className="add-btn" onClick={openNew}>
             <Plus size={18} aria-hidden="true" /> Add transaction
-          </button>
+          </Button>
         </section>
         <section className="summary-grid">
           <article className="card total-card">
@@ -397,9 +398,9 @@ function App() {
             </p>
           </div>
           {history.length > 0 && (
-            <button className="secondary-btn section-add-btn" onClick={openNew}>
+            <Button className="secondary-btn section-add-btn" onClick={openNew}>
               <Plus size={16} aria-hidden="true" /> Add
-            </button>
+            </Button>
           )}
         </section>
         <section className="transaction-list">
@@ -410,9 +411,9 @@ function App() {
               <p style={{ marginTop: 6 }}>
                 Add Amanda’s first gift to start her savings story.
               </p>
-              <button className="add-btn" onClick={openNew}>
+              <Button className="add-btn" onClick={openNew}>
                 Add first transaction
-              </button>
+              </Button>
             </div>
           ) : (
             history.map((t) => (
@@ -450,18 +451,19 @@ function App() {
                   {formatRM(t.amountSen)}
                 </div>
                 <div className="transaction-actions">
-                  <button
+                  <Button
                     aria-label={`Edit ${transactionLabels[t.type]}`}
                     onClick={() => openEdit(t)}
                   >
                     <Pencil size={16} aria-hidden="true" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="ghost"
                     aria-label={`Delete ${transactionLabels[t.type]}`}
                     onClick={() => remove(t.id)}
                   >
                     <Trash2 size={16} aria-hidden="true" />
-                  </button>
+                  </Button>
                 </div>
               </article>
             ))
@@ -489,13 +491,13 @@ function App() {
                   {editing ? "Edit transaction" : "Add transaction"}
                 </h2>
               </div>
-              <button
+              <Button
                 className="close"
                 aria-label="Close"
                 onClick={() => setModalOpen(false)}
               >
                 ×
-              </button>
+              </Button>
             </div>
             <form onSubmit={submit}>
               <div className="field">
@@ -568,7 +570,7 @@ function App() {
                   <label htmlFor="date">Date</label>
                   <Popover.Root>
                     <Popover.Trigger asChild>
-                      <button
+                      <Button
                         type="button"
                         className="date-trigger"
                         aria-label="Choose transaction date"
@@ -578,7 +580,7 @@ function App() {
                           "en-MY",
                           { day: "numeric", month: "short", year: "numeric" },
                         )}
-                      </button>
+                      </Button>
                     </Popover.Trigger>
                     <Popover.Portal>
                       <Popover.Content
@@ -661,16 +663,16 @@ function App() {
                 </div>
               )}
               <div className="modal-footer">
-                <button
+                <Button
                   type="button"
                   className="secondary-btn"
                   onClick={() => setModalOpen(false)}
                 >
                   Cancel
-                </button>
-                <button type="submit" className="add-btn">
+                </Button>
+                <Button type="submit" className="add-btn">
                   {editing ? "Save changes" : "Add to ledger"}
-                </button>
+                </Button>
               </div>
             </form>
           </section>
@@ -688,12 +690,16 @@ function App() {
             </AlertDialog.Description>
             <div className="alert-actions">
               <AlertDialog.Cancel asChild>
-                <button className="secondary-btn">Stay signed in</button>
+                <Button className="secondary-btn">Stay signed in</Button>
               </AlertDialog.Cancel>
               <AlertDialog.Action asChild>
-                <button className="danger-btn" onClick={() => void signOut()}>
+                <Button
+                  variant="danger"
+                  className="danger-btn"
+                  onClick={() => void signOut()}
+                >
                   Log out
-                </button>
+                </Button>
               </AlertDialog.Action>
             </div>
           </AlertDialog.Content>
@@ -715,12 +721,16 @@ function App() {
             </AlertDialog.Description>
             <div className="alert-actions">
               <AlertDialog.Cancel asChild>
-                <button className="secondary-btn">Cancel</button>
+                <Button className="secondary-btn">Cancel</Button>
               </AlertDialog.Cancel>
               <AlertDialog.Action asChild>
-                <button className="danger-btn" onClick={confirmDelete}>
+                <Button
+                  variant="danger"
+                  className="danger-btn"
+                  onClick={confirmDelete}
+                >
                   Delete entry
-                </button>
+                </Button>
               </AlertDialog.Action>
             </div>
           </AlertDialog.Content>
