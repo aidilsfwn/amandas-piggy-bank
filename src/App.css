@@ -39,6 +39,10 @@
     position: sticky;
     top: 0;
     z-index: 10;
+    width: calc(100% + 32px);
+    margin-left: -16px;
+    padding-right: 16px;
+    padding-left: 16px;
     min-height: 64px;
     background: color-mix(in srgb, var(--paper) 94%, transparent);
     backdrop-filter: blur(12px);
