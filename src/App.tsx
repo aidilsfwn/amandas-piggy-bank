@@ -8,6 +8,7 @@ import type { Session } from "@supabase/supabase-js";
 import {
   CalendarDays,
   ChevronDown,
+  Download,
   Gift,
   Landmark,
   LogOut,
@@ -68,6 +69,12 @@ function App() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const summary = useMemo(() => calculateSummary(transactions), [transactions]);
   const history = useMemo(() => sortTransactions(transactions), [transactions]);
+  const heldShare = summary.totalBelongingSen
+    ? Math.max(
+        0,
+        Math.min(100, (summary.heldByMeSen / summary.totalBelongingSen) * 100),
+      )
+    : 0;
 
   useEffect(() => {
     if (!supabase) return;
@@ -252,69 +259,65 @@ function App() {
   if (!owner)
     return (
       <main className="auth">
-        <section className="auth-card">
-          <div className="brand">
+        <section className="auth-intro">
+          <div className="brand brand-on-dark">
             <span className="brand-mark">
-              <PiggyBank size={23} strokeWidth={2.2} aria-hidden="true" />
+              <PiggyBank size={21} strokeWidth={2} aria-hidden="true" />
             </span>
             <span className="brand-name">Amanda's Piggy Bank</span>
           </div>
-          <h1>
-            Small gifts.
-            <br />A lasting start.
-          </h1>
-          <p>
-            {supabase
-              ? "Sign in with your email and password to keep Amanda’s ledger synced across devices."
-              : "A private place to keep Amanda’s savings clear, current, and easy to reconcile."}
-          </p>
-          <form onSubmit={signIn}>
-            <div className="field">
-              <label htmlFor="email">Email address</label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                placeholder="you@example.com"
-                required
-              />
+          <div className="auth-intro-copy">
+            <div className="eyebrow">Private family ledger</div>
+            <h1>Every ringgit,<br />accounted for.</h1>
+            <p>A simple record of Amanda’s gifts, transfers and SSPN savings.</p>
+          </div>
+          <div className="auth-note">Built for one family. Kept deliberately simple.</div>
+        </section>
+        <section className="auth-panel">
+          <div className="auth-card">
+            <div className="auth-card-head">
+              <span className="auth-kicker">Welcome back</span>
+              <h2>Sign in to the ledger</h2>
+              <p>
+                {supabase
+                  ? "Use your account details to view and update Amanda’s savings."
+                  : "A private place to keep Amanda’s savings clear and current."}
+              </p>
             </div>
-            <div className="field">
-              <label htmlFor="password">Password</label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-              />
-            </div>
-            <Button
-              className="add-btn"
-              style={{ width: "100%", marginTop: 20 }}
-              type="submit"
-            >
-              Sign in →
-            </Button>
-          </form>
-          <Button
-            className="secondary-btn"
-            style={{ width: "100%", marginTop: 10 }}
-            onClick={() => void resetPassword()}
-          >
-            Forgot password?
-          </Button>
-          {authMessage && (
-            <div className="error" role="status">
-              {authMessage}
-            </div>
-          )}
-          {resetMessage && (
-            <div className="error" role="status">
-              {resetMessage}
-            </div>
-          )}
+            <form onSubmit={signIn}>
+              <div className="field">
+                <label htmlFor="email">Email address</label>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  placeholder="you@example.com"
+                  required
+                />
+              </div>
+              <div className="field">
+                <div className="label-row">
+                  <label htmlFor="password">Password</label>
+                  <Button className="text-btn" onClick={() => void resetPassword()}>
+                    Forgot password?
+                  </Button>
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="current-password"
+                  required
+                />
+              </div>
+              <Button className="add-btn auth-submit" type="submit">
+                Sign in
+              </Button>
+            </form>
+            {authMessage && <div className="error" role="status">{authMessage}</div>}
+            {resetMessage && <div className="error" role="status">{resetMessage}</div>}
+          </div>
         </section>
       </main>
     );
@@ -325,7 +328,7 @@ function App() {
         <header className="topbar">
           <div className="brand">
             <span className="brand-mark">
-              <PiggyBank size={23} strokeWidth={2.2} aria-hidden="true" />
+              <PiggyBank size={20} strokeWidth={2} aria-hidden="true" />
             </span>
             <span className="brand-name">Amanda's Piggy Bank</span>
           </div>
@@ -334,67 +337,69 @@ function App() {
               className="secondary-btn export-btn"
               onClick={() => exportCsv(history)}
             >
-              Export CSV
+              <Download size={15} aria-hidden="true" /> Export
             </Button>
             <Button
-              className="secondary-btn logout-btn"
+              className="account-btn"
               aria-label="Log out"
               onClick={() => setLogoutOpen(true)}
             >
-              <LogOut size={16} aria-hidden="true" /> Log out
+              <span className="account-avatar" aria-hidden="true">A</span>
+              <span className="account-label">{owner}</span>
+              <LogOut size={15} aria-hidden="true" />
             </Button>
           </div>
         </header>
         <section className="hero">
           <div className="hero-copy">
-            <div className="eyebrow">
-              Amanda's savings · {new Date().getFullYear()}
-            </div>
-            <h1>
-              Growing gently,
-              <br />
-              one gift at a time.
-            </h1>
-            <p>
-              Every ringgit has a place. Keep track of what’s with you, what’s
-              in SSPN, and everything Amanda owns.
-            </p>
+            <div className="eyebrow">Savings overview</div>
+            <h1>Amanda’s ledger</h1>
+            <p>Balances and activity, as of {new Date().toLocaleDateString("en-MY", { day: "numeric", month: "long", year: "numeric" })}.</p>
           </div>
           <Button className="add-btn" onClick={openNew}>
             <Plus size={18} aria-hidden="true" /> Add transaction
           </Button>
         </section>
-        <section className="summary-grid">
-          <article className="card total-card">
-            <div>
-              <div className="card-label">Total belonging to Amanda</div>
-              <div className="amount">
-                {formatRM(summary.totalBelongingSen)}
+        <section className="overview-grid">
+          <article className="total-panel">
+            <div className="card-label">Total savings</div>
+            <div className="total-amount">{formatRM(summary.totalBelongingSen)}</div>
+            <div className="total-breakdown">
+              <span><small>Gifts received</small>{formatRM(summary.giftsReceivedSen)}</span>
+              <span><small>Dividends earned</small>{formatRM(summary.sspnDividendsSen)}</span>
+            </div>
+          </article>
+          <article className="allocation-panel">
+            <div className="panel-heading">
+              <div>
+                <div className="card-label">Where it’s held</div>
+                <h2>Account allocation</h2>
+              </div>
+              <span className="year-badge">{new Date().getFullYear()}</span>
+            </div>
+            <div className="allocation-bar" aria-label={`${heldShare.toFixed(0)}% held by me and ${(100 - heldShare).toFixed(0)}% in SSPN`}>
+              <span style={{ width: `${heldShare}%` }} />
+            </div>
+            <div className="balance-list">
+              <div className="balance-row">
+                <span className="balance-name"><i className="legend-dot held" />Held by me<small>Awaiting transfer</small></span>
+                <strong>{formatRM(summary.heldByMeSen)}</strong>
+              </div>
+              <div className="balance-row">
+                <span className="balance-name"><i className="legend-dot sspn" />SSPN account<small>Transfers + dividends</small></span>
+                <strong>{formatRM(summary.sspnBalanceSen)}</strong>
               </div>
             </div>
-            <div className="card-foot">
-              <span>Contributions {formatRM(summary.giftsReceivedSen)}</span>
-              <span>Dividends {formatRM(summary.sspnDividendsSen)}</span>
-            </div>
-          </article>
-          <article className="card balance-card">
-            <div className="card-label">Held by me</div>
-            <div className="amount">{formatRM(summary.heldByMeSen)}</div>
-            <div className="card-label">Gift money not transferred</div>
-          </article>
-          <article className="card balance-card">
-            <div className="card-label">SSPN balance</div>
-            <div className="amount">{formatRM(summary.sspnBalanceSen)}</div>
-            <div className="card-label">Transfers + dividends</div>
           </article>
         </section>
         <section className="section-head">
           <div>
+            <div className="eyebrow">Ledger</div>
             <h2>Recent activity</h2>
             <p>
               {history.length
-                ? `${history.length} ${history.length === 1 ? "entry" : "entries"} · newest first`
-                : "Your ledger will appear here"}
+                ? `${history.length} ${history.length === 1 ? "entry" : "entries"}, newest first`
+                : "Transactions will appear here"}
             </p>
           </div>
           {history.length > 0 && (
@@ -407,10 +412,8 @@ function App() {
           {history.length === 0 ? (
             <div className="empty">
               <Sprout size={34} strokeWidth={1.8} aria-hidden="true" />
-              <h3 style={{ marginTop: 10 }}>A lovely blank page</h3>
-              <p style={{ marginTop: 6 }}>
-                Add Amanda’s first gift to start her savings story.
-              </p>
+              <h3>No transactions yet</h3>
+              <p>Add the first gift or SSPN entry to begin the ledger.</p>
               <Button className="add-btn" onClick={openNew}>
                 Add first transaction
               </Button>
