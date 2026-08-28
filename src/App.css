@@ -69,6 +69,10 @@
     padding: 0;
   }
 
+  .export-btn {
+    gap: 0;
+  }
+
   .account-avatar,
   .account-label {
     display: none;
