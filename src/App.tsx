@@ -75,6 +75,23 @@ function App() {
         Math.min(100, (summary.heldByMeSen / summary.totalBelongingSen) * 100),
       )
     : 0;
+  const allocationLabel = summary.totalBelongingSen
+    ? `${heldShare.toFixed(0)}% held by me and ${(100 - heldShare).toFixed(0)}% in SSPN`
+    : "No savings recorded yet";
+
+  useEffect(() => {
+    if (!modalOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setModalOpen(false);
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", closeOnEscape);
+    };
+  }, [modalOpen]);
 
   useEffect(() => {
     if (!supabase) return;
@@ -330,7 +347,8 @@ function App() {
             <span className="brand-mark">
               <PiggyBank size={20} strokeWidth={2} aria-hidden="true" />
             </span>
-            <span className="brand-name">Amanda's Piggy Bank</span>
+            <span className="brand-name brand-name-app brand-name-app-full">Amanda's Piggy Bank</span>
+            <span className="brand-name brand-name-app brand-name-app-short">Amanda's ledger</span>
           </div>
           <div className="top-actions">
             <Button
@@ -377,7 +395,7 @@ function App() {
               </div>
               <span className="year-badge">{new Date().getFullYear()}</span>
             </div>
-            <div className="allocation-bar" aria-label={`${heldShare.toFixed(0)}% held by me and ${(100 - heldShare).toFixed(0)}% in SSPN`}>
+            <div className="allocation-bar" aria-label={allocationLabel}>
               <span style={{ width: `${heldShare}%` }} />
             </div>
             <div className="balance-list">
@@ -459,6 +477,7 @@ function App() {
                     onClick={() => openEdit(t)}
                   >
                     <Pencil size={16} aria-hidden="true" />
+                    <span className="action-label">Edit</span>
                   </Button>
                   <Button
                     variant="ghost"
@@ -466,6 +485,7 @@ function App() {
                     onClick={() => remove(t.id)}
                   >
                     <Trash2 size={16} aria-hidden="true" />
+                    <span className="action-label">Delete</span>
                   </Button>
                 </div>
               </article>

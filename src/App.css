@@ -19,3 +19,326 @@
 @media(max-width:620px){.container{width:min(calc(100% - 28px),1120px)}.topbar{min-height:68px}.account-label{display:none}.account-btn{padding-right:8px}.export-btn{width:38px;padding:0;font-size:0}.hero{display:block;padding-top:44px}.hero h1{font-size:42px}.hero .add-btn{width:100%;margin-top:24px}.overview-grid{border-left:0;border-right:0}.total-panel,.allocation-panel{padding:24px 20px}.total-panel{min-height:255px}.total-amount{font-size:44px}.total-breakdown span{font-size:13px}.allocation-bar{margin-top:32px}.section-head{margin-top:48px}.transaction-row{grid-template-columns:36px minmax(0,1fr) auto;grid-template-areas:"icon main amount" ". actions actions";gap:10px 12px;padding:14px 2px}.transaction-icon{grid-area:icon}.transaction-main{grid-area:main}.transaction-amount{grid-area:amount;align-self:start}.transaction-actions{grid-area:actions;justify-content:flex-end;opacity:1}.field-row{grid-template-columns:1fr;gap:0}.modal{padding:22px 18px}.modal-footer{flex-direction:column-reverse}.modal-footer button{width:100%}.auth-intro{min-height:280px;padding:28px 24px}.auth-intro h1{font-size:48px}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition-duration:.01ms!important;animation-duration:.01ms!important}}
 @keyframes fade-in{from{opacity:0}to{opacity:1}}
+
+/* Mobile experience */
+.brand-name-app-short,
+.action-label {
+  display: none;
+}
+
+@media (max-width: 620px) {
+  .app-shell {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  }
+
+  .container {
+    width: calc(100% - 32px);
+  }
+
+  .topbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    min-height: 64px;
+    background: color-mix(in srgb, var(--paper) 94%, transparent);
+    backdrop-filter: blur(12px);
+  }
+
+  .brand-mark {
+    width: 32px;
+    height: 32px;
+  }
+
+  .brand-name-app-full {
+    display: none;
+  }
+
+  .brand-name-app-short {
+    display: inline;
+  }
+
+  .top-actions {
+    gap: 6px;
+  }
+
+  .export-btn,
+  .account-btn {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+    padding: 0;
+  }
+
+  .account-avatar,
+  .account-label {
+    display: none;
+  }
+
+  .hero {
+    padding: 32px 0 22px;
+  }
+
+  .hero h1 {
+    margin-top: 7px;
+    font-size: clamp(36px, 11vw, 42px);
+  }
+
+  .hero-copy p {
+    max-width: 300px;
+    margin-top: 9px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .hero .add-btn {
+    position: fixed;
+    right: 14px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    left: 14px;
+    z-index: 15;
+    width: auto;
+    min-height: 52px;
+    margin: 0;
+    border: 1px solid #ffffff1f;
+    box-shadow: 0 10px 28px #1520194d;
+  }
+
+  .overview-grid {
+    width: calc(100% + 32px);
+    margin-left: -16px;
+  }
+
+  .total-panel {
+    min-height: 232px;
+    padding: 26px 20px 22px;
+  }
+
+  .total-amount {
+    margin-top: 16px;
+    font-size: clamp(40px, 12vw, 48px);
+  }
+
+  .total-breakdown span {
+    min-width: 0;
+    padding-top: 16px;
+    font-size: clamp(12px, 3.7vw, 14px);
+  }
+
+  .total-breakdown span + span {
+    padding-left: 16px;
+  }
+
+  .total-breakdown small {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .allocation-panel {
+    padding: 24px 20px 16px;
+  }
+
+  .panel-heading h2 {
+    font-size: 18px;
+  }
+
+  .allocation-bar {
+    margin: 28px 0 12px;
+  }
+
+  .balance-row {
+    padding: 16px 0;
+  }
+
+  .balance-row strong {
+    font-size: 14px;
+  }
+
+  .section-head {
+    margin: 42px 0 14px;
+  }
+
+  .section-head h2 {
+    font-size: 22px;
+  }
+
+  .section-add-btn {
+    display: none;
+  }
+
+  .transaction-list {
+    width: calc(100% + 32px);
+    margin-left: -16px;
+  }
+
+  .transaction-row {
+    grid-template-columns: 36px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon main amount"
+      ". actions actions";
+    min-height: 0;
+    padding: 15px 16px 11px;
+  }
+
+  .transaction-actions {
+    width: 100%;
+    padding-top: 9px;
+    border-top: 1px solid var(--line);
+  }
+
+  .transaction-actions button {
+    width: auto;
+    min-width: 44px;
+    height: 38px;
+    padding: 0 10px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .action-label {
+    display: inline;
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  .transaction-meta {
+    line-height: 1.35;
+  }
+
+  .empty {
+    padding: 52px 24px 32px;
+  }
+
+  .modal-backdrop {
+    place-items: end center;
+    padding: 0;
+  }
+
+  .modal {
+    width: 100%;
+    max-height: 92dvh;
+    padding: 0 18px calc(18px + env(safe-area-inset-bottom));
+    border-right: 0;
+    border-bottom: 0;
+    border-left: 0;
+    border-radius: 18px 18px 0 0;
+  }
+
+  .modal-head {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    margin: 0 -18px 20px;
+    padding: 18px;
+    border-bottom: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .close {
+    width: 40px;
+    height: 40px;
+  }
+
+  .field {
+    margin-top: 14px;
+  }
+
+  input,
+  textarea,
+  .select-trigger,
+  .date-trigger {
+    min-height: 48px;
+    font-size: 16px;
+  }
+
+  .calendar-content {
+    width: calc(100vw - 24px);
+    overflow-x: auto;
+  }
+
+  .modal-footer {
+    position: sticky;
+    bottom: calc(-18px - env(safe-area-inset-bottom));
+    z-index: 2;
+    flex-direction: row;
+    margin: 24px -18px calc(-18px - env(safe-area-inset-bottom));
+    padding: 12px 18px calc(12px + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--line);
+    background: var(--surface);
+  }
+
+  .modal-footer button {
+    width: auto;
+    min-height: 48px;
+  }
+
+  .modal-footer .secondary-btn {
+    flex: 1;
+  }
+
+  .modal-footer .add-btn {
+    flex: 1.35;
+  }
+
+  .auth-intro {
+    min-height: auto;
+    padding: 20px 20px 24px;
+  }
+
+  .auth-intro-copy {
+    margin: 34px 0 0;
+  }
+
+  .auth-intro h1 {
+    margin-top: 10px;
+    font-size: clamp(36px, 11vw, 44px);
+    line-height: 1;
+  }
+
+  .auth-intro p {
+    margin-top: 14px;
+    font-size: 13px;
+    line-height: 1.45;
+  }
+
+  .auth-note {
+    display: none;
+  }
+
+  .auth-panel {
+    padding: 30px 20px calc(44px + env(safe-area-inset-bottom));
+  }
+
+  .auth-card-head h2 {
+    font-size: 27px;
+  }
+
+  .auth-card .field {
+    margin-top: 18px;
+  }
+
+  .auth-submit {
+    min-height: 50px;
+  }
+}
+
+@media (max-width: 350px) {
+  .brand-name-app-short {
+    font-size: 13px;
+  }
+
+  .total-breakdown {
+    grid-template-columns: 1fr;
+  }
+
+  .total-breakdown span + span {
+    margin-top: 12px;
+    padding-left: 0;
+    border-left: 0;
+  }
+
+  .total-breakdown small {
+    display: inline;
+    margin-right: 7px;
+  }
+}
