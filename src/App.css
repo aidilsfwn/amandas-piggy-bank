@@ -39,9 +39,16 @@
   align-items: center;
 }
 .ui-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-sizing: border-box;
   font: inherit;
+  line-height: 1;
   cursor: pointer;
   border: 0;
+  white-space: nowrap;
 }
 .ui-button:disabled {
   cursor: not-allowed;
@@ -54,6 +61,9 @@
   min-height: 42px;
   padding: 9px 13px;
   border-radius: 12px;
+}
+.secondary-btn {
+  justify-content: center;
 }
 .icon-btn:hover,
 .secondary-btn:hover {
@@ -100,10 +110,6 @@ h2 {
   max-width: 460px;
 }
 .add-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   background: var(--ink);
   color: #fff;
   border-radius: 14px;
@@ -230,6 +236,9 @@ h2 {
   gap: 3px;
 }
 .transaction-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 8px;
   color: var(--muted);
   background: transparent;
@@ -369,9 +378,11 @@ textarea {
   }
   .top-actions {
     gap: 6px;
+    align-items: stretch;
   }
   .export-btn,
   .logout-btn {
+    flex: 1;
     min-height: 40px;
     padding: 8px 10px;
     font-size: 12px;
