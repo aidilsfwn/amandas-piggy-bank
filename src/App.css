@@ -96,6 +96,10 @@ h2 {
   max-width: 460px;
 }
 .add-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background: var(--ink);
   color: #fff;
   border-radius: 14px;
@@ -356,6 +360,18 @@ textarea {
   }
   .topbar {
     padding-top: 18px;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .top-actions {
+    gap: 6px;
+  }
+  .export-btn,
+  .logout-btn {
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 12px;
+    white-space: nowrap;
   }
   .hero {
     padding-top: 30px;
@@ -375,14 +391,54 @@ textarea {
     margin-top: 34px;
   }
   .transaction-row {
+    display: grid;
+    grid-template-columns: 40px minmax(0, 1fr) auto;
+    grid-template-areas:
+      "icon main amount"
+      "actions actions actions";
     padding: 12px;
     gap: 10px;
   }
+  .transaction-icon {
+    grid-area: icon;
+  }
+  .transaction-main {
+    grid-area: main;
+  }
+  .transaction-amount {
+    grid-area: amount;
+    align-self: start;
+  }
   .transaction-actions {
-    flex-direction: column;
+    grid-area: actions;
+    width: 100%;
+    justify-content: flex-end;
+    border-top: 1px solid var(--line);
+    padding-top: 8px;
+    margin-top: 2px;
+    gap: 8px;
+  }
+  .transaction-actions button {
+    min-width: 40px;
+    min-height: 40px;
+  }
+  .section-head {
+    align-items: flex-end;
+    gap: 12px;
+  }
+  .section-add-btn {
+    flex: none;
+    min-height: 40px;
+    padding: 8px 10px;
   }
   .modal-backdrop {
-    place-items: end center;
+    place-items: center;
+    padding: 12px;
+  }
+  .modal {
+    max-height: calc(100dvh - 24px);
+    border-radius: 20px;
+    padding: 20px;
   }
 }
 @media (max-width: 380px) {
@@ -428,26 +484,144 @@ textarea {
   padding: 12px 13px;
   text-align: left;
 }
-.date-trigger { justify-content: flex-start; }
+.date-trigger {
+  justify-content: flex-start;
+}
 .select-trigger:focus-visible,
-.date-trigger:focus-visible { outline: 2px solid var(--coral); outline-offset: 2px; }
+.date-trigger:focus-visible {
+  outline: 2px solid var(--coral);
+  outline-offset: 2px;
+}
 .select-content,
-.calendar-content { z-index: 10; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 14px 35px #2f241b1f; padding: 6px; }
-.select-content { min-width: var(--radix-select-trigger-width); }
-.select-item { padding: 10px 12px; border-radius: 8px; outline: none; cursor: pointer; font-size: 14px; }
-.select-item[data-highlighted] { background: var(--cream); }
-.calendar-content { padding: 12px; }
-.calendar-content .rdp-root { --rdp-accent-color: var(--coral); --rdp-accent-background-color: var(--peach); --rdp-today-color: var(--coral); font-size: 13px; }
-.calendar-content .rdp-day_button { border-radius: 8px; }
-.logout-btn, .export-btn { display: inline-flex; align-items: center; gap: 7px; }
-.logout-btn { color: var(--ink); }
-.export-btn { color: var(--ink); background: transparent; border-color: transparent; }
-.export-btn:hover { background: var(--peach); }
-.alert-overlay { position: fixed; inset: 0; z-index: 20; background: #28211e66; animation: fade-in .15s ease-out; }
-.alert-content { position: fixed; z-index: 21; left: 50%; top: 50%; width: min(calc(100% - 32px), 400px); transform: translate(-50%, -50%); background: var(--cream); border: 1px solid var(--line); border-radius: 20px; padding: 24px; box-shadow: 0 20px 60px #0003; }
-.alert-title { font-size: 20px; font-weight: 700; }
-.alert-description { color: var(--muted); font-size: 14px; line-height: 1.55; margin-top: 8px; }
-.alert-actions { display: flex; justify-content: flex-end; gap: 10px; margin-top: 24px; }
-.danger-btn { min-height: 42px; border-radius: 12px; padding: 9px 14px; background: #b85445; color: #fff; font-weight: 700; }
-.danger-btn:hover { background: #984437; }
-@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.calendar-content {
+  z-index: 10;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  box-shadow: 0 14px 35px #2f241b1f;
+  padding: 6px;
+}
+.select-content {
+  min-width: var(--radix-select-trigger-width);
+}
+.select-item {
+  padding: 10px 12px;
+  border-radius: 8px;
+  outline: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+.select-item[data-highlighted] {
+  background: var(--cream);
+}
+.calendar-content {
+  padding: 16px;
+  max-width: calc(100vw - 32px);
+  box-sizing: border-box;
+}
+.calendar-content .rdp-root {
+  margin: 0;
+}
+.calendar-content .rdp-root {
+  --rdp-accent-color: var(--coral);
+  --rdp-accent-background-color: var(--peach);
+  --rdp-today-color: var(--coral);
+  font-size: 13px;
+}
+.calendar-content .rdp-day_button {
+  border-radius: 8px;
+}
+.logout-btn,
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+}
+.logout-btn {
+  color: var(--ink);
+}
+.export-btn {
+  color: var(--ink);
+  background: transparent;
+  border-color: transparent;
+}
+.export-btn:hover {
+  background: var(--peach);
+}
+.alert-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: #28211e66;
+  animation: fade-in 0.15s ease-out;
+}
+.alert-content {
+  position: fixed;
+  z-index: 21;
+  left: 50%;
+  top: 50%;
+  width: min(calc(100% - 32px), 400px);
+  transform: translate(-50%, -50%);
+  background: var(--cream);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 20px 60px #0003;
+}
+.alert-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+.alert-description {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.55;
+  margin-top: 8px;
+}
+.alert-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+}
+.danger-btn {
+  min-height: 42px;
+  border-radius: 12px;
+  padding: 9px 14px;
+  background: #b85445;
+  color: #fff;
+  font-weight: 700;
+}
+.danger-btn:hover {
+  background: #984437;
+}
+@media (max-width: 700px) {
+  .topbar {
+    flex-wrap: wrap;
+  }
+  .brand {
+    flex: 1 1 auto;
+  }
+  .top-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+  .modal .field-row {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+  .modal-footer button {
+    width: 100%;
+  }
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

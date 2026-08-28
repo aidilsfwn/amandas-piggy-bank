@@ -5,7 +5,19 @@ import {
   type FormEvent as ReactFormEvent,
 } from "react";
 import type { Session } from "@supabase/supabase-js";
-import { CalendarDays, ChevronDown, Gift, Landmark, LogOut, PiggyBank, Sparkles, Sprout } from "lucide-react";
+import {
+  CalendarDays,
+  ChevronDown,
+  Gift,
+  Landmark,
+  LogOut,
+  Pencil,
+  PiggyBank,
+  Plus,
+  Sparkles,
+  Sprout,
+  Trash2,
+} from "lucide-react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import * as Popover from "@radix-ui/react-popover";
 import * as Select from "@radix-ui/react-select";
@@ -241,7 +253,9 @@ function App() {
       <main className="auth">
         <section className="auth-card">
           <div className="brand">
-            <span className="brand-mark"><PiggyBank size={23} strokeWidth={2.2} aria-hidden="true" /></span>
+            <span className="brand-mark">
+              <PiggyBank size={23} strokeWidth={2.2} aria-hidden="true" />
+            </span>
             <span className="brand-name">Amanda's Piggy Bank</span>
           </div>
           <h1>
@@ -309,7 +323,9 @@ function App() {
       <div className="container">
         <header className="topbar">
           <div className="brand">
-            <span className="brand-mark"><PiggyBank size={23} strokeWidth={2.2} aria-hidden="true" /></span>
+            <span className="brand-mark">
+              <PiggyBank size={23} strokeWidth={2.2} aria-hidden="true" />
+            </span>
             <span className="brand-name">Amanda's Piggy Bank</span>
           </div>
           <div className="top-actions">
@@ -344,7 +360,7 @@ function App() {
             </p>
           </div>
           <button className="add-btn" onClick={openNew}>
-            ＋ Add transaction
+            <Plus size={18} aria-hidden="true" /> Add transaction
           </button>
         </section>
         <section className="summary-grid">
@@ -381,8 +397,8 @@ function App() {
             </p>
           </div>
           {history.length > 0 && (
-            <button className="secondary-btn" onClick={openNew}>
-              ＋ Add
+            <button className="secondary-btn section-add-btn" onClick={openNew}>
+              <Plus size={16} aria-hidden="true" /> Add
             </button>
           )}
         </section>
@@ -404,7 +420,13 @@ function App() {
                 <div
                   className={`transaction-icon ${t.type === "sspn_transfer" ? "transfer" : t.type === "sspn_dividend" ? "dividend" : ""}`}
                 >
-                  {t.type === "gift_received" ? <Gift size={18} aria-hidden="true" /> : t.type === "sspn_transfer" ? <Landmark size={18} aria-hidden="true" /> : <Sparkles size={18} aria-hidden="true" />}
+                  {t.type === "gift_received" ? (
+                    <Gift size={18} aria-hidden="true" />
+                  ) : t.type === "sspn_transfer" ? (
+                    <Landmark size={18} aria-hidden="true" />
+                  ) : (
+                    <Sparkles size={18} aria-hidden="true" />
+                  )}
                 </div>
                 <div className="transaction-main">
                   <div className="transaction-title">
@@ -432,13 +454,13 @@ function App() {
                     aria-label={`Edit ${transactionLabels[t.type]}`}
                     onClick={() => openEdit(t)}
                   >
-                    ✎
+                    <Pencil size={16} aria-hidden="true" />
                   </button>
                   <button
                     aria-label={`Delete ${transactionLabels[t.type]}`}
                     onClick={() => remove(t.id)}
                   >
-                    ⌫
+                    <Trash2 size={16} aria-hidden="true" />
                   </button>
                 </div>
               </article>
@@ -489,16 +511,41 @@ function App() {
                     })
                   }
                 >
-                  <Select.Trigger className="select-trigger" aria-label="What happened?">
+                  <Select.Trigger
+                    className="select-trigger"
+                    aria-label="What happened?"
+                  >
                     <Select.Value />
-                    <Select.Icon><ChevronDown size={16} /></Select.Icon>
+                    <Select.Icon>
+                      <ChevronDown size={16} />
+                    </Select.Icon>
                   </Select.Trigger>
                   <Select.Portal>
-                    <Select.Content className="select-content" position="popper">
+                    <Select.Content
+                      className="select-content"
+                      position="popper"
+                    >
                       <Select.Viewport>
-                        <Select.Item className="select-item" value="gift_received"><Select.ItemText>Gift received</Select.ItemText></Select.Item>
-                        <Select.Item className="select-item" value="sspn_transfer"><Select.ItemText>Transferred into SSPN</Select.ItemText></Select.Item>
-                        <Select.Item className="select-item" value="sspn_dividend"><Select.ItemText>SSPN dividend</Select.ItemText></Select.Item>
+                        <Select.Item
+                          className="select-item"
+                          value="gift_received"
+                        >
+                          <Select.ItemText>Gift received</Select.ItemText>
+                        </Select.Item>
+                        <Select.Item
+                          className="select-item"
+                          value="sspn_transfer"
+                        >
+                          <Select.ItemText>
+                            Transferred into SSPN
+                          </Select.ItemText>
+                        </Select.Item>
+                        <Select.Item
+                          className="select-item"
+                          value="sspn_dividend"
+                        >
+                          <Select.ItemText>SSPN dividend</Select.ItemText>
+                        </Select.Item>
                       </Select.Viewport>
                     </Select.Content>
                   </Select.Portal>
@@ -521,18 +568,33 @@ function App() {
                   <label htmlFor="date">Date</label>
                   <Popover.Root>
                     <Popover.Trigger asChild>
-                      <button type="button" className="date-trigger" aria-label="Choose transaction date">
+                      <button
+                        type="button"
+                        className="date-trigger"
+                        aria-label="Choose transaction date"
+                      >
                         <CalendarDays size={16} />
-                        {new Date(`${form.date}T00:00:00`).toLocaleDateString("en-MY", { day: "numeric", month: "short", year: "numeric" })}
+                        {new Date(`${form.date}T00:00:00`).toLocaleDateString(
+                          "en-MY",
+                          { day: "numeric", month: "short", year: "numeric" },
+                        )}
                       </button>
                     </Popover.Trigger>
                     <Popover.Portal>
-                      <Popover.Content className="calendar-content" align="end" sideOffset={8}>
+                      <Popover.Content
+                        className="calendar-content"
+                        align="end"
+                        sideOffset={8}
+                      >
                         <DayPicker
                           mode="single"
                           selected={new Date(`${form.date}T00:00:00`)}
                           onSelect={(date) => {
-                            if (date) setForm({ ...form, date: date.toISOString().slice(0, 10) })
+                            if (date)
+                              setForm({
+                                ...form,
+                                date: date.toISOString().slice(0, 10),
+                              });
                           }}
                           required
                         />
@@ -618,24 +680,48 @@ function App() {
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="alert-overlay" />
           <AlertDialog.Content className="alert-content">
-            <AlertDialog.Title className="alert-title">Log out?</AlertDialog.Title>
-            <AlertDialog.Description className="alert-description">You’ll need to sign in again to view Amanda’s savings.</AlertDialog.Description>
+            <AlertDialog.Title className="alert-title">
+              Log out?
+            </AlertDialog.Title>
+            <AlertDialog.Description className="alert-description">
+              You’ll need to sign in again to view Amanda’s savings.
+            </AlertDialog.Description>
             <div className="alert-actions">
-              <AlertDialog.Cancel asChild><button className="secondary-btn">Stay signed in</button></AlertDialog.Cancel>
-              <AlertDialog.Action asChild><button className="danger-btn" onClick={() => void signOut()}>Log out</button></AlertDialog.Action>
+              <AlertDialog.Cancel asChild>
+                <button className="secondary-btn">Stay signed in</button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action asChild>
+                <button className="danger-btn" onClick={() => void signOut()}>
+                  Log out
+                </button>
+              </AlertDialog.Action>
             </div>
           </AlertDialog.Content>
         </AlertDialog.Portal>
       </AlertDialog.Root>
-      <AlertDialog.Root open={deleteId !== null} onOpenChange={(open) => !open && setDeleteId(null)}>
+      <AlertDialog.Root
+        open={deleteId !== null}
+        onOpenChange={(open) => !open && setDeleteId(null)}
+      >
         <AlertDialog.Portal>
           <AlertDialog.Overlay className="alert-overlay" />
           <AlertDialog.Content className="alert-content">
-            <AlertDialog.Title className="alert-title">Delete this entry?</AlertDialog.Title>
-            <AlertDialog.Description className="alert-description">This removes the transaction from Amanda’s ledger and cannot be undone.</AlertDialog.Description>
+            <AlertDialog.Title className="alert-title">
+              Delete this entry?
+            </AlertDialog.Title>
+            <AlertDialog.Description className="alert-description">
+              This removes the transaction from Amanda’s ledger and cannot be
+              undone.
+            </AlertDialog.Description>
             <div className="alert-actions">
-              <AlertDialog.Cancel asChild><button className="secondary-btn">Cancel</button></AlertDialog.Cancel>
-              <AlertDialog.Action asChild><button className="danger-btn" onClick={confirmDelete}>Delete entry</button></AlertDialog.Action>
+              <AlertDialog.Cancel asChild>
+                <button className="secondary-btn">Cancel</button>
+              </AlertDialog.Cancel>
+              <AlertDialog.Action asChild>
+                <button className="danger-btn" onClick={confirmDelete}>
+                  Delete entry
+                </button>
+              </AlertDialog.Action>
             </div>
           </AlertDialog.Content>
         </AlertDialog.Portal>
