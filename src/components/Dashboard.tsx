@@ -1,7 +1,8 @@
-import { DownloadSimple, Plus, SignOut, Sparkle } from "@phosphor-icons/react";
+import { DownloadSimple, Plus, SignOut } from "@phosphor-icons/react";
 import { motion } from "motion/react";
 import { formatRM, type SavingsSummary } from "../domain";
 import { AnimatedCurrency } from "./AnimatedCurrency";
+import { BrandMark } from "./BrandMark";
 import { Button } from "./ui/button";
 
 type DashboardProps = {
@@ -23,7 +24,7 @@ export function Dashboard({ owner, summary, transactionCount, onAdd, onExport, o
     <>
       <header className="appHeader">
         <a className="appIdentity" href="#top" aria-label="Amanda's Piggy Bank home">
-          <span className="brandPig brandPig--small"><Sparkle size={20} weight="fill" /></span>
+          <BrandMark size="small" />
           <span>Amanda's Piggy Bank</span>
         </a>
         <div className="headerTools">

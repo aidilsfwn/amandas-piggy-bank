@@ -1,6 +1,6 @@
 import { useState, type FormEvent } from "react";
-import { PiggyBank } from "@phosphor-icons/react";
 import { motion } from "motion/react";
+import { BrandMark } from "./BrandMark";
 import { Button } from "./ui/button";
 
 type AuthScreenProps = {
@@ -26,7 +26,7 @@ export function AuthScreen({ configured, authMessage, resetMessage, onSignIn, on
     <main className="welcomeView">
       <motion.section className="welcomeStory" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
         <div className="welcomeBrand">
-          <span className="brandPig"><PiggyBank size={30} weight="duotone" /></span>
+          <BrandMark />
           <span>Amanda's Piggy Bank</span>
         </div>
         <div className="welcomeMessage">
