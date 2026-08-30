@@ -1,24 +1,20 @@
-import { forwardRef, type ButtonHTMLAttributes } from "react";
+import { forwardRef } from "react";
+import { motion, type HTMLMotionProps } from "motion/react";
 
-type ButtonVariant = "default" | "secondary" | "danger" | "ghost";
+type ButtonTone = "primary" | "soft" | "quiet" | "danger";
 
-export type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: ButtonVariant;
-};
-
-const variantClasses: Record<ButtonVariant, string> = {
-  default: "ui-button-default",
-  secondary: "ui-button-secondary",
-  danger: "ui-button-danger",
-  ghost: "ui-button-ghost",
+export type ButtonProps = HTMLMotionProps<"button"> & {
+  tone?: ButtonTone;
 };
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = "", variant = "default", type = "button", ...props }, ref) => (
-    <button
+  ({ className = "", tone = "primary", type = "button", ...props }, ref) => (
+    <motion.button
       ref={ref}
       type={type}
-      className={`ui-button ${variantClasses[variant]} ${className}`.trim()}
+      whileTap={{ scale: 0.95 }}
+      transition={{ type: "spring", stiffness: 420, damping: 18 }}
+      className={`softButton softButton--${tone} ${className}`.trim()}
       {...props}
     />
   ),
